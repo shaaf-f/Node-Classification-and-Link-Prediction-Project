@@ -1,0 +1,127 @@
+:param {
+  file_path_root: 'file:///',
+  file_0: 'author.csv',
+  file_1: 'paper.csv',
+  file_2: 'journal.csv',
+  file_3: 'topic.csv',
+  file_4: 'author_paper.csv',
+  file_5: 'paper_journal.csv',
+  file_6: 'paper_topic.csv',
+  file_7: 'paper_reference.csv'.
+  idsToSkip: []
+};
+
+// CONSTRAINT creation
+// -------------------
+//
+// Create node uniqueness constraints, ensuring no duplicates for the given node label and ID property exist in the database. This also ensures no duplicates are introduced in future.
+//
+// NOTE: The following constraint creation syntax is valid for database version 4.4.0 and above.
+CREATE CONSTRAINT `ID_Author_uniq` IF NOT EXISTS
+FOR (n: `Author`)
+REQUIRE (n.`ID`) IS UNIQUE;
+CREATE CONSTRAINT `ID_Paper_uniq` IF NOT EXISTS
+FOR (n: `Paper`)
+REQUIRE (n.`ID`) IS UNIQUE;
+CREATE CONSTRAINT `Name_Journal_uniq` IF NOT EXISTS
+FOR (n: `Journal`)
+REQUIRE (n.`Name`) IS UNIQUE;
+CREATE CONSTRAINT `ID_Topic_uniq` IF NOT EXISTS
+FOR (n: `Topic`)
+REQUIRE (n.`ID`) IS UNIQUE;
+
+// NODE load
+// ---------
+//
+// Load nodes in batches, one node label at a time. Nodes will be created using a MERGE statement to ensure a node with the same label and ID property remains unique. Pre-existing nodes found by a MERGE statement will have their other properties set to the latest values encountered in a load file.
+//
+// NOTE: Any nodes with IDs in the 'idsToSkip' list parameter will not be loaded.
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_0) AS row
+WITH row
+WHERE NOT row.`Author ID` IN $idsToSkip AND NOT toInteger(trim(row.`Author ID`)) IS NULL
+CALL {
+  WITH row
+  MERGE (n: `Author` { `ID`: toInteger(trim(row.`Author ID`)) })
+  SET n.`ID` = toInteger(trim(row.`Author ID`))
+  SET n.`Name` = row.`Author Name`
+  SET n.`URL` = row.`Author URL`
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_1) AS row
+WITH row
+WHERE NOT row.`Paper ID` IN $idsToSkip AND NOT row.`Paper ID` IS NULL
+CALL {
+  WITH row
+  MERGE (n: `Paper` { `ID`: row.`Paper ID` })
+  SET n.`ID` = row.`Paper ID`
+  SET n.`DOI` = row.`Paper DOI`
+  SET n.`Title` = row.`Paper Title`
+  SET n.`Year` = toInteger(trim(row.`Paper Year`))
+  SET n.`URL` = row.`Paper URL`
+  SET n.`Citation Count` = toInteger(trim(row.`Paper Citation Count`))
+  SET n.`Fields of Study` = row.`Fields of Study`
+  SET n.`Journal Volume` = toInteger(trim(row.`Journal Volume`))
+  SET n.`Journal Date` = datetime(row.`Journal Date`)
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_2) AS row
+WITH row
+WHERE NOT row.`Journal Name` IN $idsToSkip AND NOT row.`Journal Name` IS NULL
+CALL {
+  WITH row
+  MERGE (n: `Journal` { `Name`: row.`Journal Name` })
+  SET n.`Name` = row.`Journal Name`
+  SET n.`Publisher` = row.`Journal Publisher`
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_3) AS row
+WITH row
+WHERE NOT row.`Topic ID` IN $idsToSkip AND NOT toInteger(trim(row.`Topic ID`)) IS NULL
+CALL {
+  WITH row
+  MERGE (n: `Topic` { `ID`: toInteger(trim(row.`Topic ID`)) })
+  SET n.`ID` = toInteger(trim(row.`Topic ID`))
+  SET n.`Name` = row.`Topic Name`
+  SET n.`URL` = row.`Topic URL`
+} IN TRANSACTIONS OF 10000 ROWS;
+
+
+// RELATIONSHIP load
+// -----------------
+//
+// Load relationships in batches, one relationship type at a time. Relationships are created using a MERGE statement, meaning only one relationship of a given type will ever be created between a pair of nodes.
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_4) AS row
+WITH row 
+CALL {
+  WITH row
+  MATCH (source: `Author` { `ID`: toInteger(trim(row.`Author ID`)) })
+  MATCH (target: `Paper` { `ID`: row.`Paper ID` })
+  MERGE (source)-[r: `CONTRIBUTED_TO`]->(target)
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_5) AS row
+WITH row 
+CALL {
+  WITH row
+  MATCH (source: `Paper` { `ID`: row.`Paper ID` })
+  MATCH (target: `Journal` { `Name`: row.`Journal Name` })
+  MERGE (source)-[r: `IS_IN`]->(target)
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_6) AS row
+WITH row 
+CALL {
+  WITH row
+  MATCH (source: `Paper` { `ID`: row.`Paper ID` })
+  MATCH (target: `Topic` { `ID`: toInteger(trim(row.`Topic ID`)) })
+  MERGE (source)-[r: `EXPLAINS`]->(target)
+} IN TRANSACTIONS OF 10000 ROWS;
+
+:auto LOAD CSV WITH HEADERS FROM ($file_path_root + $file_7) AS row
+WITH row 
+CALL {
+  WITH row
+  MATCH (source: `Paper` { `ID`: row.`Paper ID` })
+  MATCH (target: `Paper` { `ID`: row.`Referenced Paper ID` })
+  MERGE (source)-[r: `REFERS_TO`]->(target)
+} IN TRANSACTIONS OF 10000 ROWS;
