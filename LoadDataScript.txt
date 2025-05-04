@@ -7,7 +7,7 @@
   file_4: 'author_paper.csv',
   file_5: 'paper_journal.csv',
   file_6: 'paper_topic.csv',
-  file_7: 'paper_reference.csv'.
+  file_7: 'paper_reference.csv',
   idsToSkip: []
 };
 
