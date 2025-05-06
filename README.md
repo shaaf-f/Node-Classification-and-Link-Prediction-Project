@@ -56,7 +56,7 @@ Evaluation metrics: ROC-AUC, Precision, Recall, F1-score.
 | Task                    | Model               | ROC-AUC | Precision | Recall | Comments                                           |
 | ----------------------- | ------------------- | ------- | --------- | ------ | -------------------------------------------------- |
 | Author Classification   | RandomForrestClassifier (baseline) | 0.5395   | 0.0675      | 0.0736   | Accuracy: 0.355, very low precision, recall, and accuracy                |
-| Author Classification   | RandomForrestClassifier (features) | 0.6667   | 0.75      | 0.6667   | Accuracy: 0.6, feature inclusion improves precision, recall,l and accuracy drastically                |
+| Author Classification   | RandomForrestClassifier (features) | 0.6667   | 0.75      | 0.6667   | Accuracy: 0.6, feature inclusion improves precision, recall, and accuracy drastically                |
 | Citation Recommendation | LightGBM (baseline) | 0.53    | 0.97      | 0.06   | High precision but very low recall;                |
 | Citation Recommendation | LightGBM (features) | 0.69    | 0.90      | 0.37   | Feature inclusion improves recall moderately;      |
 
