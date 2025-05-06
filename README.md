@@ -4,6 +4,7 @@
 
 ### Group Tasks:
 Node Classification: Author Classification (Sajal Fatima)
+
 Link Prediction: Citation Recommendation (Shaaf Farooque)
 
 ## Overview
@@ -20,8 +21,8 @@ The dataset consists of:
 * journal.csv: Journal metadata
 * paper.csv: Paper metadata
 * topic.csv: Topics
-* paper_journal.csv: Paper-journal mapping
-* paper_topic.csv: Paper-topic mapping
+* paper_journal.csv: Paper-journal relationship
+* paper_topic.csv: Paper-topic relationship
 * paper_reference.csv: Citation links between papers
 
 ## Project Workflow
@@ -61,10 +62,10 @@ Evaluation metrics: ROC-AUC, Precision, Recall, F1-score.
 ## Reproducibility
 
 ### Prerequisites
-Python 3.8+
-Neo4j Desktop
-Jupyter Notebook / VS Code
-Python Libraries: py2neo ,pandas ,networkx ,numpy ,scikit-learn ,lightgbm ,random ,matplotlib ,seaborn ,imbalanced-learn (imblearn)
+* Python 3.8+
+* Neo4j Desktop
+* Jupyter Notebook / VS Code
+* Python Libraries: py2neo ,pandas ,networkx ,numpy ,scikit-learn ,lightgbm ,random ,matplotlib ,seaborn ,imbalanced-learn (imblearn)
 
 ### Setup Instructions
 
@@ -93,8 +94,8 @@ dbms.security.allow_csv_import_from_file_urls=true
 ## Team Members & Contributions
 | Name                   | Task                                                |
 | -------------          | --------------------------------------------------- |
-| \[Shaaf Farooque]      | Citation recommendation, README                     |
-| \[Sajal Fatima]        | Author classification, Dataset Cleaning             |
+|   Shaaf Farooque       | Citation recommendation, README                     |
+|   Sajal Fatima         | Author classification, Dataset Cleaning             |
 
 ## Citation
 
