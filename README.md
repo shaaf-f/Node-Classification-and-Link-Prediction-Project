@@ -96,8 +96,8 @@ dbms.security.allow_csv_import_from_file_urls=true
 ## Team Members & Contributions
 | Name                   | Task                                                |
 | -------------          | --------------------------------------------------- |
-|   Shaaf Farooque       | Citation recommendation, README                     |
-|   Sajal Fatima         | Author classification, Dataset Cleaning             |
+|   Shaaf Farooque       | Citation recommendation, data loading, README                     |
+|   Sajal Fatima         | Author classification, Dataset Cleaning, README             |
 
 ## Citation
 
