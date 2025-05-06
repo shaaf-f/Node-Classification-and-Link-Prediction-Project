@@ -37,10 +37,11 @@ Built a property graph using Neo4j.
 Nodes: Author, Paper, Topic, Journal
 Relationships: WROTE, CITES, PUBLISHED_IN, HAS_TOPIC, CO_AUTHOR
 
-### 3. Node Classification – Author Domain Prediction
-Constructed author embeddings from their neighborhood (e.g., co-authors, topics).
-Trained a classification model (e.g., LightGBM) to predict research domain/topic ID of authors.
-Evaluation metrics: Accuracy, F1-score, Precision, Recall.
+### 3. Node Classification – Author Domain PredictionTreated the co-authorship and topic graph as an undirected property graph.
+Used Neo4j GDS to extract author-level features (PageRank, degree centrality, betweenness, Jaccard similarity, Louvain community ID).
+Engineered and aggregated features per author; encoded field_of_study with LabelEncoder.
+Trained RandomForestClassifier(n_estimators=100, random_state=42)
+Evaluation metrics: Accuracy, Precision, Recall, F1-score, ROC-AUC.
 
 ### 4. Link Prediction – Citation Recommendation
 Treated the citation graph as directed.
@@ -54,7 +55,8 @@ Evaluation metrics: ROC-AUC, Precision, Recall, F1-score.
 
 | Task                    | Model               | ROC-AUC | Precision | Recall | Comments                                           |
 | ----------------------- | ------------------- | ------- | --------- | ------ | -------------------------------------------------- |
-| Author Classification   | DATA                | DATA    | DATA      | DATA   | lorem ipsum                                        |
+| Author Classification   | RandomForrestClassifier (baseline) | 0.5395   | 0.0675      | 0.0736   | Accuracy: 0.355, very low precision, recall, and accuracy                |
+| Author Classification   | RandomForrestClassifier (features) | 0.6667   | 0.75      | 0.6667   | Accuracy: 0.6, feature inclusion improves precision, recall,l and accuracy drastically                |
 | Citation Recommendation | LightGBM (baseline) | 0.53    | 0.97      | 0.06   | High precision but very low recall;                |
 | Citation Recommendation | LightGBM (features) | 0.69    | 0.90      | 0.37   | Feature inclusion improves recall moderately;      |
 
